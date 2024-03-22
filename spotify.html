@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify.1</title>
+</head>
+<body>
+    <table border="2px">
+        <tr>
+            <th> Autore </th>
+            <th> Titolo </th>
+            <th> Copertina </th>
+            <th> Ascolto </th>
+        </tr>
+        <tbody id ="tbody"></tbody>
+    </table>
+    <hr>
+    <script>
+        var acces_token = "BQBhGAR_OI36IeywQbiWV_BiWnR6sE-xpCRvPt3sqpbwwihhT7bEVgD2nWgu10f-4plStifGxN52g-0E7wZd2sHwk1Jmf13ErmZRxSe3Kn0TNU0gthVtFa0RdHQsdvOlAtNb79Jw4IL1pC4NRt5_zDr7eq1Nc9F2oOQGChrfLi2bzUYJL4bI22m1iUBl9ubkfeH4OSCiBE799ypyi6fjtnhz";
+        var album_id = "09wqWIOKWnS6wjBrXe08B"
+
+        async function fetchAlbumData(){
+            try{
+                const response = await fetch( `https://api.spotify.com/v1/albums/${album_id}`,{
+                    headers: {
+                        'Authorization': 'Bearer' + acces_token
+                    }
+
+                });
+
+                if (!response.ok){
+                    throw new Error ('Errore nella richiesta: ' + response.status);
+                }
+                const userData = await response.json();
+                return userData;
+            }catch(error){
+                console.error('Errore durante la richiesta: ', error);
+                return null;
+            }
+        }
+
+        
+        async function renderTable(){
+            try{
+                const jsonAlbumData = await fetchAlbumData();
+                let tbody = "<tr>";
+                    tbody += `<td>${jsonAlbumData["artists"][0]["name"]}</td>`;
+                    tbody += `<td>${jsonAlbumData["artists"]}</td>`;
+                    tbody += `<td><img scr = "${jsonAlbumData["image"][0]["url"]}" alt = "Copertina" style = "width: 100px;"</td>`;
+                    tbody += `<td><a href = "${jsonAlbumData["external_urls"]["spotify"]}">Ascolto</td>`;
+            document.getElementById("tbody").innerHTML = tbody;
+            }catch(error){
+                console.error('Errore durante la richiesta: ', error);
+                return null;
+            }
+        }
+    </script>
+</body>
+</html>
